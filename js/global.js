@@ -83,12 +83,20 @@ $('.datetimepicker2').datetimepicker({
     format: 'YYYY'
 });
 
+$.ajaxSetup({ 
+     beforeSend:function() { 
+         showGif();
+     },
+     complete:function() {
+           $('#joke').empty();
+     }
+});
+
 $(document).ready(function() {
     $.ajax({
         method: "GET",
         url: genresUrl,
-        dataType: "json",
-        beforeSend: showGif
+        dataType: "json"
     }).done(showGenres).fail(function(data) { 
         console.log(data.responseText);
     });
@@ -302,12 +310,11 @@ function makeUrl(inputCase, elem, url){
 }
 
 function scrollWin() {
-    $('.results').animate(window.scrollBy(0, $('.image-header').height()), 'slow');
+    $('body,html').animate({ scrollTop: $('.image-header').height() }, 500);
 }
 
 var showMovies = function(data) {
     if(data.total_results > 0) {
-        window.scrollBy(0, 100);
         $('.results').empty();
         $('#pages').html('<b>Pages:</b> ' + data.total_pages);
         $('#results').html('<b>Resuls:</b> ' + data.total_results);
@@ -417,19 +424,19 @@ var showMovies = function(data) {
             $('.pagination').html(pagination);
         }
         scrollWin();
-    //scrollSmoothToBottom('y');
     } else {
         $('.results').append('<h2>Nu a fost gasit nici un rezultat!</h2>');
     }
 };
 
 function ajaxCall(url) {
-    console.log(url);
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
     $.ajax({
         method: "GET",
         url: url  + '&page=' + currentPage,
         dataType: "json",
-        beforeSend: showGif
+//        beforeSend: showGif
     }).done(showMovies).fail(function(data) { 
         console.log(data.responseText);
     });
